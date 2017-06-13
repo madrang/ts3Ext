@@ -902,7 +902,7 @@ class ts3UserSelf(ts3User):
         if err != ts3defines.ERROR_ok and err != ts3defines.ERROR_ok_no_update: raise ts3Error("Error flushing client updates: (%s, %s)" % (err, ts3lib.getErrorMessage(err)[1]))
     
 
-class plugincommand(object):
+class ts3PluginCommand(object):
     def __init__(self, plugin, name, cmd, parser):
         self._mutex = Lock()
         
