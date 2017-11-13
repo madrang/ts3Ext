@@ -509,6 +509,9 @@ class ts3Channel(object):
     #groups={}
     
     def __init__(self, server, cid, name=None):
+        if not server: raise ValueError("Missing Server object.")
+        if not cid or cid < 0: raise ValueError("Invalid channel ID.")
+        
         self.server = server
         self.serverConnectionHandlerID = server.schid
         self.channelID = cid
@@ -597,6 +600,9 @@ class ts3Channel(object):
 
 class ts3User(object):
     def __init__(self, server, cid, name=None, uid=None, perm=None):
+        if not server: raise ValueError("Missing Server object.")
+        if not cid or cid < 0: raise ValueError("Invalid client ID.")
+        
         self.server = server
         self.serverConnectionHandlerID = server.schid
         self.clientID = cid
@@ -619,6 +625,7 @@ class ts3User(object):
     @property
     def channel(self):
         (err, cid) = ts3lib.getChannelOfClient(self.schid, self.clientID)
+        if err == ts3defines.ERROR_client_invalid_id: self.logMsg("ts3User.channel: Invalid id: (schid:%s, cli:%s)" % (self.schid, self.clientID), logLevel.ERROR)
         if err != ts3defines.ERROR_ok: raise ts3Error("Error getting channel id: (%s, %s)" % (err, ts3lib.getErrorMessage(err)[1]))
         return self.server.getChannel(cid)
     
