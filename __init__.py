@@ -7,8 +7,9 @@ from ts3plugin import ts3plugin
 import ts3lib, ts3defines, ts3client, pytson
 from weakref import WeakValueDictionary
 from threading import Lock
+from subprocess import Popen, PIPE, STDOUT
 
-import sys, io
+import sys, io, os
 import argparse
 import traceback
 
@@ -984,6 +985,22 @@ class ts3PluginCommand(object):
         cmd = cls(plugin, name, function, parser)
         cmd.permissionlevel = permLevel
         return cmd
+    
+    @staticmethod
+    def runShellCommand(user, command, silent=False, shell=False):
+        procEnv = os.environ.copy()
+        procEnv["LD_LIBRARY_PATH"] = "/usr/lib"
+        
+        print("Running command: " + repr(command))
+        proc = Popen(command, bufsize=1, stdout=PIPE, stderr=STDOUT, close_fds=True, env=procEnv, shell=shell)
+        if user:
+            for line in iter(proc.stdout.readline, b''):
+                user.logMsg(line.decode(sys.stdout.encoding))
+                if not silent:
+                    user.sendTextMsg(line.decode(sys.stdout.encoding))
+        #proc.stdout.close()
+        #return proc.wait()
+        return proc
     
     def run(self, user, args, public=False):
         if not user:
