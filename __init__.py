@@ -312,6 +312,7 @@ class ts3Server(object):
         self._ts3ServerGroups = {}
         self._ts3Channels = WeakValueDictionary()
         self._ts3Users = WeakValueDictionary()
+        self.talkingUsers = None
         self.host = host
         self.serverConnectionHandlerID = schid
         self._name = name
@@ -436,6 +437,18 @@ class ts3Server(object):
         else:
             self.logMsg("Channel group added %s %s" % (name, cgid))
             self._ts3ChannelGroups[cgid] = ts3ChannelGroup(self, cgid, name, iconID)
+    
+    def updateTalkStatus(self, clientID, status, isReceivedWhisper):
+        user = self.getUser(clientID)
+        self.logMsg("Talk status change: %s, Status: %s" % (user.name, status), logLevel.TRACE)
+        if not self.talkingUsers:
+            self.talkingUsers = []
+        if status == 0 and user in self.talkingUsers:
+            self.talkingUsers.remove(user)
+        elif status == 1:
+            self.talkingUsers.append(user)
+        else:
+            self.logMsg("Unknown Talk status: %s, Status: %s" % (user.name, status), logLevel.WARNING)
     
     def mute(self, users):
         #TODO Allow to call on a single user.
@@ -735,6 +748,9 @@ class ts3User(object):
     
     @property
     def isTalking(self):
+        if self.server.talkingUsers:
+            if self in self.server.talkingUsers: return True
+            else: return False
         (err, italk) = ts3lib.getClientVariableAsInt(self.schid, self.clientID, ts3defines.ClientProperties.CLIENT_FLAG_TALKING)
         if err != ts3defines.ERROR_ok: raise ts3Error("Error getting client talk status: (%s, %s)" % (err, ts3lib.getErrorMessage(err)[1]))
         return italk
