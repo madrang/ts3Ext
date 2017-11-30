@@ -444,10 +444,17 @@ class ts3Server(object):
         self.logMsg("Talk status change: %s, Status: %s" % (user.name, status), logLevel.TRACE)
         if not self.talkingUsers:
             self.talkingUsers = []
-        if status == 0 and user in self.talkingUsers:
-            self.talkingUsers.remove(user)
+        if status == 0:
+            #Stopped Talking
+            if user in self.talkingUsers:
+                self.talkingUsers.remove(user)
         elif status == 1:
-            self.talkingUsers.append(user)
+            #Talking
+            if not user in self.talkingUsers:
+                self.talkingUsers.append(user)
+        elif status == 2:
+            #Talking while muted.
+            self.logMsg("%s is talking while muted." % user.name, logLevel.NOTICE)
         else:
             self.logMsg("Unknown Talk status: %s, Status: %s" % (user.name, status), logLevel.WARNING)
     
