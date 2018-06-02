@@ -575,7 +575,7 @@ class ts3Channel(object):
     
     @property
     def neededTalkPower(self):
-        (error, tp) = ts3.getChannelVariableAsInt(self.schid, self.channelID, ts3defines.ChannelPropertiesRare.CHANNEL_NEEDED_TALK_POWER)
+        (err, tp) = ts3lib.getChannelVariable(self.schid, self.channelID, ts3defines.ChannelPropertiesRare.CHANNEL_NEEDED_TALK_POWER)
         if err != ts3defines.ERROR_ok: raise ts3Error("Error getting client channel needed talk power: (%s, %s)" % (err, ts3lib.getErrorMessage(err)[1]))
         return tp
     
