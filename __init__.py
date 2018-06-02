@@ -286,9 +286,9 @@ class ts3SessionHost(object):
         self._ts3Servers[schid] = srv
         return srv
     
-    def getUser(self, schid, uid):
+    def getUser(self, schid, clid):
         srv = self.getServer(schid)
-        return srv.getUser(uid)
+        return srv.getUser(clid)
     
     def getChannel(self, schid, chid):
         srv = self.getServer(schid)
@@ -390,12 +390,12 @@ class ts3Server(object):
         for userID in users:
             yield self.getUser(userID)
     
-    def getUser(self, uid):
+    def getUser(self, clid):
         if uid == self.me.clientID: return self.me
-        if uid in self._ts3Users: return self._ts3Users[uid]
+        if uid in self._ts3Users: return self._ts3Users[clid]
         
-        user = ts3User(self, uid)
-        self._ts3Users[uid] = user
+        user = ts3User(self, clid)
+        self._ts3Users[clid] = user
         return user
     
     def getChannel(self, chid):
