@@ -685,7 +685,7 @@ class ts3User(object):
     def databaseID(self):
         if self._databaseID:
             return self._databaseID
-        (err, dbid) = ts3lib.getClientVariableAsString(self.schid, self.clientID, ts3defines.ClientPropertiesRare.CLIENT_DATABASE_ID)
+        (err, dbid) = ts3lib.getClientVariable(self.schid, self.clientID, ts3defines.ClientPropertiesRare.CLIENT_DATABASE_ID)
         if err != ts3defines.ERROR_ok: raise ts3Error("Error getting client database ID: (%s, %s)" % (err, ts3lib.getErrorMessage(err)[1]))
         self._databaseID = dbid
         return dbid
