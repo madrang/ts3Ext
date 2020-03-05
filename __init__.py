@@ -679,7 +679,7 @@ class ts3User(object):
         elif ret == 0: return 1
         #Blocked
         elif ret == 1: return -1
-        else: raise ts3Error("Client id %s has an unknown TS3 status %s" % (uniqueIdentifier, ret))
+        else: raise ts3Error("Client id %s has an unknown TS3 status %s" % (self.uniqueIdentifier, ret))
     
     @property
     def databaseID(self):
